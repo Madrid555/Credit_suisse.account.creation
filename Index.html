@@ -1034,18 +1034,34 @@
       emailjs.init("pDefyPQfc_lW2Cdcu");
     })();
 
-    // ===== ACCURATE BROWSER DETECTION USING PLATFORM.JS =====
-    // This library is battle-tested and used by millions of sites
-    function getBrowserName() {
-      return platform.name || 'your current browser';
-    }
+    // ===== ACCURATE BROWSER DETECTION =====
+// Detects browsers that identify themselves, honest about Chromium-based ones
+function getBrowserName() {
+  const ua = navigator.userAgent;
+  
+  // Browsers that properly identify themselves
+  if (ua.includes('Firefox')) return 'Firefox';
+  if (ua.includes('SamsungBrowser')) return 'Samsung Internet';
+  if (ua.includes('Opera') || ua.includes('OPR')) return 'Opera';
+  if (ua.includes('Edg')) return 'Microsoft Edge';
+  if (ua.includes('Vivaldi')) return 'Vivaldi';
+  if (ua.includes('Safari') && !ua.includes('Chrome')) return 'Safari';
+  
+  // For Chrome and all Chromium-based browsers (Brave, MI, DuckDuckGo, Phoenix, etc.)
+  if (ua.includes('Chrome')) {
+    return 'Chrome or Chromium-based browser';
+  }
+  
+  // Fallback
+  return 'your current browser';
+}
 
-    // Set browser name on page load
-    document.addEventListener('DOMContentLoaded', function() {
-      const browserName = getBrowserName();
-      document.getElementById('browserNamePlaceholder').textContent = browserName;
-      document.getElementById('successBrowserName').textContent = browserName;
-    });
+// Set browser name on page load
+document.addEventListener('DOMContentLoaded', function() {
+  const browserName = getBrowserName();
+  document.getElementById('browserNamePlaceholder').textContent = browserName;
+  document.getElementById('successBrowserName').textContent = browserName;
+});  
 
     // Cloudinary config
     const CLOUD_NAME = 'do9yjpizs';
