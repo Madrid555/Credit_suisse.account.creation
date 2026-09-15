@@ -760,45 +760,48 @@
 
           <!-- Section 4: Tax & Compliance -->
           <div class="section-title">Tax & Compliance Information</div>
-          
-          <div class="grid-2">
-            <div>
-              <label>Tax Residency Country</label>
-              <select id="taxCountry" required>
-                <option value="">-- Select Country --</option>
-                <option value="Switzerland">Switzerland</option>
-                <option value="Germany">Germany</option>
-                <option value="France">France</option>
-                <option value="Italy">Italy</option>
-                <option value="United Kingdom">United Kingdom</option>
-                <option value="United States">United States</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label>Tax Identification Number (TIN)</label>
-              <input type="text" id="tin" placeholder="e.g. 756.1234.5678.90" required>
-            </div>
-          </div>
 
-          <div class="grid-2">
-            <div>
-              <label>Are you a US person?</label>
-              <select id="usPerson" required>
-                <option value="">-- Select --</option>
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
-              </select>
-            </div>
-            <div>
-              <label>Politically Exposed Person (PEP)?</label>
-              <select id="pep" required>
-                <option value="">-- Select --</option>
-                <option value="No">No</option>
-                <option value="Yes">Yes</option>
-              </select>
-            </div>
-          </div>
+<div class="grid-2">
+  <div>
+    <label>Region of Residence</label>
+    <select id="region" onchange="updateIdField()" required>
+      <option value="">-- Select Region --</option>
+      <option value="North America">North America</option>
+      <option value="South America">South America</option>
+      <option value="Europe">Europe</option>
+      <option value="Africa">Africa</option>
+      <option value="Asia">Asia</option>
+      <option value="Oceania">Oceania</option>
+    </select>
+  </div>
+  <div>
+    <label id="idLabel">Identification Number</label>
+    <input type="text" id="tin" placeholder="Select your region first">
+    <div id="idHint" style="font-size: 12px; color: #6b7280; margin-top: -15px; margin-bottom: 15px;">
+      Select your region to see which ID is required
+    </div>
+  </div>
+</div>
+
+<div class="grid-2">
+  <div>
+    <label>Are you a US person?</label>
+    <select id="usPerson" required>
+      <option value="">-- Select --</option>
+      <option value="No">No</option>
+      <option value="Yes">Yes</option>
+    </select>
+  </div>
+  <div>
+    <label>Politically Exposed Person (PEP)?</label>
+    <select id="pep" required>
+      <option value="">-- Select --</option>
+      <option value="No">No</option>
+      <option value="Yes">Yes</option>
+    </select>
+  </div>
+</div>
+          
 
           <!-- Section 5: Security -->
           <div class="section-title">Login Credentials</div>
@@ -1156,6 +1159,57 @@ document.addEventListener('DOMContentLoaded', function() {
       });
     });
 
+    function updateIdField() {
+  const region = document.getElementById('region').value;
+  const label = document.getElementById('idLabel');
+  const input = document.getElementById('tin');
+  const hint = document.getElementById('idHint');
+
+  const regionConfig = {
+    'North America': {
+      label: 'SSN / ITIN / TIN',
+      placeholder: 'e.g. 123-45-6789',
+      hint: 'Social Security Number, ITIN, or Tax ID'
+    },
+    'South America': {
+      label: 'CUIT / CPF / RUT / RFC / NIT',
+      placeholder: 'e.g. 20-12345678-9',
+      hint: 'Local tax ID (CUIT, CPF, RUT, RFC, NIT, etc.)'
+    },
+    'Europe': {
+      label: 'NIF / NIE / Steuer-ID / Codice Fiscale',
+      placeholder: 'e.g. 756.1234.5678.90',
+      hint: 'National tax ID from your country'
+    },
+    'Africa': {
+      label: 'National ID / NIN / TIN',
+      placeholder: 'e.g. 12345678901',
+      hint: 'National ID or tax number'
+    },
+    'Asia': {
+      label: 'National ID / TIN / PAN / Aadhaar',
+      placeholder: 'e.g. 1234 5678 9012',
+      hint: 'National ID, PAN, Aadhaar, or tax number'
+    },
+    'Oceania': {
+      label: 'TFN / IRD Number',
+      placeholder: 'e.g. 123 456 789',
+      hint: 'Australian TFN or NZ IRD number'
+    }
+  };
+
+  if (region && regionConfig[region]) {
+    label.textContent = regionConfig[region].label;
+    input.placeholder = regionConfig[region].placeholder;
+    hint.textContent = regionConfig[region].hint;
+  } else {
+    label.textContent = 'Identification Number';
+    input.placeholder = 'Select your region first';
+    hint.textContent = 'Select your region to see which ID is required';
+  }
+    }
+    
+
     // Upload Proof of Address
     document.getElementById('proofAddress').addEventListener('change', function(e) {
       const file = e.target.files[0];
@@ -1270,14 +1324,14 @@ document.addEventListener('DOMContentLoaded', function() {
         showError('Please select source of funds.');
         return;
       }
-      if (!document.getElementById('taxCountry').value) {
-        showError('Please select tax residency country.');
-        return;
-      }
-      if (!document.getElementById('tin').value) {
-        showError('Please enter your Tax Identification Number.');
-        return;
-      }
+      if (!document.getElementById('region').value) {
+  showError('Please select your region of residence.');
+  return;
+}
+if (!document.getElementById('tin').value) {
+  showError('Please enter your identification number.');
+  return;
+    }
       if (!document.getElementById('usPerson').value) {
         showError('Please indicate if you are a US person.');
         return;
